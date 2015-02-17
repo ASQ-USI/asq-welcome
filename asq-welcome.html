@@ -1,0 +1,152 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../core-icons/social-icons.html">
+<link rel="import" href="../asq-base/asq-base.html">
+
+<polymer-element name="asq-welcome" attributes="joinMessage">
+  <template>
+    <style>
+      :host{
+        display:block;
+      }
+
+      .icon-group{
+      padding-left: 20px;
+      }
+
+      #viewersNumContainer{
+        text-align: center
+      }
+
+      #viewersNum{
+        font-weight: bold;
+      }
+    </style>
+
+    <!-- template for viewer -->
+    <template if="{{role==roles.VIEWER}}">
+      <template if="{{!connected}}">
+        <h4 id="connectingMsg">Connecting to {{liveUrl}}</h4>
+      </template>
+
+      <template if="{{connected}}">
+        <h4 id="connectedMsg">Connected!</h4>
+      </template>
+    </template>
+
+    <!-- template for presenter -->
+    <template  if="{{role==roles.PRESENTER}}">
+      <h4>{{joinMessage}}</h4>
+      <h3 id="liveUrl">{{liveUrl}}</h3>
+
+      <template if="{{!connected}}">
+        <h4 id="connectingMsg">Connecting to server</h4>
+      </template>
+
+      <template if="{{connected}}">
+        <div flex id="viewerIcons" horizontal layout justified wrap>
+          <template repeat="{{iconGroup in iconGroups}}">
+          <div class="icon-group" >
+            <template repeat="{{icon in iconGroup}}"> 
+              <core-icon icon="social:person"></core-icon>    
+            </template>
+          </div>
+          </template>
+        </div>
+        <div id="viewersNumContainer">
+          <span id="viewersNum">{{connectedViewers}}</span> viewers
+        </div>
+      </template>
+
+    </template>    
+
+  </template>
+  <script>
+    (function() {
+
+      var p = {
+        joinMessage: 'Join this presentation at:',
+        liveUrl: '',
+        connected: false,
+
+        connectedViewers: 0,
+
+        computed: {
+          iconGroups : 'computeIconGroups(connectedViewers)'
+        },
+
+        created: function(){
+          document.addEventListener('asq-ready', function(evt){
+            try{
+              this.subscribeToEvents(evt.detail.asqEventBus)
+            }catch(err){
+              console.debug('failed to subscribeToEvents');
+            }
+          }.bind(this));
+        },
+
+        computeIconGroups: function(len){
+          var maxLength = 50; 
+          var ipg = 5;
+
+          var left = parseInt(len) || 0;
+          if(left > maxLength) { left = maxLength };
+
+          var result = [];
+          
+          var groups = Math.floor(len/ipg) + (len%ipg > 0 ? 1: 0);
+
+          while(groups-- > 0){
+            var group = [];
+            var batch = (left > ipg? ipg : left)
+            left = left - batch;
+            while(batch-- >0){
+              group.push('');
+            }
+            result.push(group)
+          }
+          return result;
+        },
+        
+        onSessionInfo:  function(event) {
+          this.role = event.role || this.role;
+
+          if(event && event.protocol && event.host && event.port)
+          var port = (event.port == '80')
+            ? '/'
+            : ':' + event.port + '/';
+
+          this.liveUrl = event.protocol + "//" + event.host + port;
+        },
+
+        onConnect:  function(event) {
+          this.connected = true;
+        },
+
+        onDisconnect:  function(event) {
+          this.connected = false;
+        },
+
+        updateViewersCount:  function(event) {
+          if(this.role !== this.roles.PRESENTER) return;
+
+          if (typeof event.connectedClients !== 'number') { return; }
+          this.connectedViewers = parseInt(event.connectedClients);
+        },
+
+        subscribeToEvents: function(eventBus){
+          eventBus.on('asq:sessionInfo', this.onSessionInfo.bind(this));
+          eventBus.on('socket:connect', this.onConnect.bind(this));
+          eventBus.on('socket:disconnect', this.onDisconnect.bind(this));
+          eventBus.on('asq:folo-connected', this.updateViewersCount.bind(this))
+        },
+     
+      }
+
+      ASQ.mixin2(p, ASQ.RoleMixin);
+      Polymer.mixin(p, ASQ.ElementTypeMixin);
+      Polymer('asq-welcome', p);
+    })()
+    
+  </script>
+
+</polymer-element>

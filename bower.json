@@ -1,0 +1,21 @@
+{
+  "name": "asq-welcome",
+  "version": "0.0.0",
+  "homepage": "https://github.com/ASQ-USI/asq-welcome",
+  "authors": [
+    "Vasileios Triglianos <triglian@gmail.com>",
+    "Zhenfei Nie <zhenfei.nie@gmail.com>"
+  ],
+  "description": "Place this at the start of your ASQ presentation (or wherever you want) to show information about the live's URL, connected users etc.",
+  "keywords": [
+    "ASQ"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "polymer": "Polymer/polymer#^0.5.1",
+    "asq-base": "ASQ-USI/asq-base#master"
+  },
+  "devDependencies": {
+    "web-component-tester": "Polymer/web-component-tester#^2.0.0-rc1"
+  }
+}

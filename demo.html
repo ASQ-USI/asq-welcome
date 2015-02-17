@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+  <meta name="asq-elements" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  <title>asq-welcome</title>
+
+  <script src="../webcomponentsjs/webcomponents.js"></script>
+
+  <link href="asq-welcome.html" rel="import">
+
+  <style shim-shadowdom>
+    body {
+      font-family: RobotoDraft, 'Helvetica Neue', Helvetica, Arial;
+      font-size: 14px;
+      margin: 0;
+      padding: 24px;
+      -webkit-tap-highlight-color: rgba(0,0,0,0);
+      -webkit-touch-callout: none;
+    }
+    section {
+      padding: 20px 0;
+    }
+    section > div {
+      padding: 14px;
+      font-size: 16px;
+    }
+  </style>
+
+</head>
+<body>
+
+<template is="auto-binding" >
+
+  <section>
+    <h2>Viewer</h2>
+    <asq-welcome role="viewer"></asq-welcome>
+    <br>
+    
+    <h2>Presenter</h2>
+    <asq-welcome role="presenter"></asq-welcome>
+
+  </section>
+
+
+</template>
+
+</body>
+</html>
