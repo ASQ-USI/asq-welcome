@@ -142,8 +142,7 @@
      
       }
 
-      ASQ.mixin2(p, ASQ.RoleMixin);
-      Polymer.mixin(p, ASQ.ElementTypeMixin);
+      ASQ.asqify(p, true);
       Polymer('asq-welcome', p);
     })()
     
