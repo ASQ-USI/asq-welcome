@@ -53,7 +53,7 @@
           </template>
         </div>
         <div id="viewersNumContainer">
-          <span id="viewersNum">{{connectedViewers}}</span> viewers
+          <span id="viewersNum">{{connectedViewers.length}}</span> viewers
         </div>
       </template>
 
@@ -68,13 +68,12 @@
         liveUrl: '',
         connected: false,
 
-        connectedViewers: 0,
-
         computed: {
-          iconGroups : 'computeIconGroups(connectedViewers)'
+          iconGroups : 'computeIconGroups(connectedViewers.length)'
         },
 
         created: function(){
+          this.connectedViewers = [];
           document.addEventListener('asq-ready', function(evt){
             try{
               this.subscribeToEvents(evt.detail.asqEventBus)
@@ -111,7 +110,8 @@
           this.role = event.role || this.role;
 
           if(event && event.protocol && event.host && event.port)
-          var port = (event.port == '80')
+          var port = ((event.protocol == 'http:' && event.port == '80') 
+            || (event.protocol == 'https:' && event.port == '443'))
             ? '/'
             : ':' + event.port + '/';
 
@@ -127,17 +127,19 @@
         },
 
         updateViewersCount:  function(event) {
-          if(this.role !== this.roles.PRESENTER) return;
+        },
 
-          if (typeof event.connectedClients !== 'number') { return; }
-          this.connectedViewers = parseInt(event.connectedClients);
+        onConnectedClients: function(event){
+          if(this.role !== this.roles.PRESENTER) return;
+          this.connectedViewers = event.connectedViewers;
         },
 
         subscribeToEvents: function(eventBus){
           eventBus.on('asq:sessionInfo', this.onSessionInfo.bind(this));
           eventBus.on('socket:connect', this.onConnect.bind(this));
           eventBus.on('socket:disconnect', this.onDisconnect.bind(this));
-          eventBus.on('asq:folo-connected', this.updateViewersCount.bind(this))
+          eventBus.on('asq:folo-connected', this.updateViewersCount.bind(this));
+          eventBus.on('asq:connected-clients', this.onConnectedClients.bind(this));
         },
      
       }
