@@ -35,7 +35,7 @@
 
     <!-- template for presenter -->
     <template  if="{{role==roles.PRESENTER}}">
-      <h4>{{joinMessage}}</h4>
+      <h4 id="joinMsg">{{joinMessage}}</h4>
       <h3 id="liveUrl">{{liveUrl}}</h3>
 
       <template if="{{!connected}}">
