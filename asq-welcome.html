@@ -109,13 +109,13 @@
         onSessionInfo:  function(event) {
           this.role = event.role || this.role;
 
-          if(event && event.protocol && event.host && event.port)
-          var port = ((event.protocol == 'http:' && event.port == '80') 
-            || (event.protocol == 'https:' && event.port == '443'))
-            ? '/'
-            : ':' + event.port + '/';
+          // if(event && event.protocol && event.host && event.port)
+          // var port = ((event.protocol == 'http:' && event.port == '80') 
+          //   || (event.protocol == 'https:' && event.port == '443'))
+          //   ? '/'
+          //   : ':' + event.port + '/';
 
-          this.liveUrl = event.protocol + "//" + event.host + port;
+          this.liveUrl = event.liveUrl;
         },
 
         onConnect:  function(event) {
