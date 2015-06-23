@@ -1,6 +1,8 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../core-icons/social-icons.html">
 <link rel="import" href="../asq-base/asq-base.html">
+<script src="../qrjs/qr.js"></script>
+<link rel="import" href="../webcomponent-qr-code/src/qr-code.html">
 
 <polymer-element name="asq-welcome" attributes="joinMessage">
   <template>
@@ -11,6 +13,12 @@
 
       .icon-group{
       padding-left: 20px;
+      }
+
+      #liveUrl{
+        font-weight: bold;
+        color: inherit;
+        text-decoration: none;
       }
 
       #viewersNumContainer{
@@ -35,8 +43,12 @@
 
     <!-- template for presenter -->
     <template  if="{{role==roles.PRESENTER}}">
-      <h4 id="joinMsg">{{joinMessage}}</h4>
-      <h3 id="liveUrl">{{liveUrl}}</h3>
+      <div id="joinMsg">{{joinMessage}} <a id="liveUrl" href="{{liveUrl}}">{{liveUrl}}</a></div>
+
+      <div id="qrCodeContainer">
+        <qr-code format="svg" data="{{presentationViewerUrl}}">
+      </qr-code></div>
+
 
       <template if="{{!connected}}">
         <h4 id="connectingMsg">Connecting to server</h4>
@@ -66,6 +78,7 @@
       var p = {
         joinMessage: 'Join this presentation at:',
         liveUrl: '',
+        presentationViewerUrl: '',
         connected: false,
 
         computed: {
@@ -109,13 +122,8 @@
         onSessionInfo:  function(event) {
           this.role = event.role || this.role;
 
-          // if(event && event.protocol && event.host && event.port)
-          // var port = ((event.protocol == 'http:' && event.port == '80') 
-          //   || (event.protocol == 'https:' && event.port == '443'))
-          //   ? '/'
-          //   : ':' + event.port + '/';
-
           this.liveUrl = event.liveUrl;
+          this.presentationViewerUrl = event.presentationViewerUrl;
         },
 
         onConnect:  function(event) {
